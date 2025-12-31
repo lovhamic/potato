@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Special New Year Gift</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Patrick+Hand&display=swap" rel="stylesheet">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script type="text/javascript">
+       (function(){
+          // REPLACE WITH YOUR ACTUAL PUBLIC KEY FROM EMAILJS DASHBOARD
+          // Example: emailjs.init("user_xxxxxxxxxxxx");
+          emailjs.init(qRU_mg35GnE0EUdN6); 
+       })();
+    </script>
+
+    <style>
+        :root {
+            --bg-color: #FFF5E4;
+            --tomato-red: #FF6B6B;
+            --potato-brown: #CFAA7D;
+            --accent-green: #95D7A6;
+            --text-color: #4A4A4A;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Patrick Hand', cursive;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Fredoka One', cursive;
+            color: var(--tomato-red);
+        }
+
+        /* --- Section 1: Hero & Interaction --- */
+        #hero-section {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+        }
+
+        .character-container {
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        .speech-bubble {
+            background: white;
+            padding: 15px 25px;
+            border-radius: 20px;
+            position: absolute;
+            top: -80px;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .speech-bubble:after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            border-width: 10px 10px 0;
+            border-style: solid;
+            border-color: white transparent;
+            transform: translateX(-50%);
+        }
+
+        .tomato-char {
+            font-size: 100px;
+            filter: drop-shadow(0 10px 10px rgba(255, 107, 107, 0.3));
+            animation: wiggle 2s ease-in-out infinite;
+        }
+
+        .gift-container {
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .gift-container:hover {
+            transform: scale(1.05) rotate(5deg);
+        }
+
+        .gift-emoji {
+            font-size: 120px;
+            display: inline-block;
+            filter: drop-shadow(0 10px 10px rgba(0,0,0,0.2));
+        }
+
+        /* Gift Opening Animation States */
+        .gift-container.opening .gift-emoji {
+            animation: poof 0.6s forwards ease-out;
+        }
+
+        /* --- The Letter Popup --- */
+        #letter-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+            z-index: 100;
+        }
+
+        #letter-overlay.show {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .letter-paper {
+            background: #FFFBF0;
+            width: 80%;
+            max-width: 500px;
+            padding: 40px;
+            border-radius: 5px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            background-image: linear-gradient(#FFFBF0 95%, #E0D8C8 5%);
+            background-size: 100% 30px;
+            line-height: 30px;
+            transform: translateY(50px) scale(0.9);
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+        }
+
+        #letter-overlay.show .letter-paper {
+            transform: translateY(0) scale(1);
+        }
+
+        .close-letter-btn {
+            position: absolute;
+            bottom: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--tomato-red);
+            color: white;
+            border: none;
+            padding: 10px 30px;
+            border-radius: 20px;
+            font-family: 'Fredoka One', cursive;
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+        }
+
+        /* --- Hidden Content (Images & Form) --- */
+        #hidden-content {
+            display: none;
+            opacity: 0;
+            transition: opacity 1s ease;
+            padding-bottom: 100px;
+        }
+
+        #hidden-content.visible {
+            display: block;
+            opacity: 1;
+        }
+
+        /* --- Image Section --- */
+        #image-section {
+            padding: 50px 20px;
+            text-align: center;
+            background: #FFF0F0;
+        }
+
+        .scroll-instruction {
+            margin-bottom: 30px;
+            font-size: 1.2rem;
+            color: var(--tomato-red);
+            animation: pulse 2s infinite;
+        }
+
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .memory-img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .memory-img:hover {
+            transform: translateY(-10px);
+        }
+
+        /* --- Message Section --- */
+        #message-section {
+            padding: 80px 20px;
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .aesthetic-form-container {
+            background: white;
+            padding: 40px;
+            border-radius: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border: 3px solid var(--accent-green);
+        }
+
+        textarea {
+            width: 100%;
+            height: 150px;
+            padding: 15px;
+            border: 2px dashed var(--potato-brown);
+            border-radius: 15px;
+            font-family: 'Patrick Hand', cursive;
+            font-size: 1.1rem;
+            resize: none;
+            outline: none;
+            box-sizing: border-box; /* Important for padding to not affect width */
+        }
+
+        .send-btn {
+            margin-top: 20px;
+            background: var(--accent-green);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 25px;
+            font-family: 'Fredoka One', cursive;
+            font-size: 1.3rem;
+            cursor: pointer;
+            transition: background 0.3s;
+            width: 100%;
+        }
+
+        .send-btn:hover {
+            background: #7BC78F;
+        }
+
+        #final-wish {
+            display: none;
+            margin-top: 30px;
+            font-size: 2.5rem;
+            color: var(--tomato-red);
+            animation: bounceIn 1s;
+        }
+
+        /* --- Animations --- */
+        @keyframes float {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(-10px); }
+        }
+        @keyframes wiggle {
+            0%, 100% { transform: rotate(-5deg); }
+            50% { transform: rotate(5deg); }
+        }
+        @keyframes poof {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.4); opacity: 0.5; filter: blur(5px);}
+            100% { transform: scale(0); opacity: 0; }
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+        @keyframes bounceIn {
+            0% { opacity: 0; transform: scale(0.3); }
+            50% { opacity: 1; transform: scale(1.05); }
+            70% { transform: scale(0.9); }
+            100% { transform: scale(1); }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            .speech-bubble { font-size: 0.9rem; padding: 10px 15px; }
+            .tomato-char { font-size: 80px; }
+            .gift-emoji { font-size: 90px; }
+            .letter-paper { padding: 25px; width: 85%; }
+        }
+    </style>
+</head>
+<body>
+
+    <section id="hero-section">
+        <div class="character-container">
+            <div class="speech-bubble">Open the gift potatooo! It's a New Year surprise! 🥔</div>
+            <div class="tomato-char">🍅</div>
+        </div>
+
+        <div class="gift-container" id="gift-trigger">
+            <div class="gift-emoji">
+                🎁
+            </div>
+        </div>
+    </section>
+
+
+    <div id="letter-overlay">
+        <div class="letter-paper">
+            <h2>Dearest Potatoo,</h2>
+            <p>Wow, another year has passed! I just wanted to take a moment to tell you how incredibly special you are.</p>
+            <p>Your smile lights up my room, your eyes pierce through my heart, All I want to be is with you</p>
+            <p>I wish 2026 to be our year</p>
+            <p>With all my love,<br>Your fav Tomatoooo</p>
+            
+            <button class="close-letter-btn" id="close-letter">when we are together &darr;</button>
+        </div>
+    </div>
+
+
+    <div id="hidden-content">
+        
+        <section id="image-section">
+            <h2>✨ tomato got potatooo ✨</h2>
+            <p class="scroll-instruction">Scroll down and explore...</p>
+            
+            <div class="image-grid">
+                <img src="01.jpeg" alt="Memory 1" class="memory-img">
+                <img src="02.jpeg" alt="Memory 2" class="memory-img">
+                <img src="03.jpeg" alt="Memory 3" class="memory-img">
+                <img src="04.jpeg" alt="Memory 4" class="memory-img">
+                <img src="05.jpeg" alt="Memory 5" class="memory-img">
+                <img src="06.jpeg" alt="Memory 6" class="memory-img">
+                <img src="07.jpeg" alt="Memory 7" class="memory-img">
+                <img src="08.jpeg" alt="Memory 8" class="memory-img">
+                <img src="09.jpeg" alt="Memory 9" class="memory-img">
+            </div>
+        </section>
+
+        <section id="message-section">
+            <div class="aesthetic-form-container" id="form-container">
+                <h2>📝 Write about how you feel now...</h2>
+                <p style="margin-bottom: 20px; font-size: 0.9em;">(A New Year's note to the your tomato!)</p>
+                <form id="message-form">
+                    <textarea id="user-message" name="message" placeholder="Type something sweet here..." required></textarea>
+                    <button type="submit" class="send-btn" id="send-button">Send 💌</button>
+                </form>
+            </div>
+
+            <div id="final-wish">
+                🎉 Happy New Year! 🎉<br>May it be your best one yet!
+            </div>
+        </section>
+
+    </div>
+
+
+    <script>
+        // --- Elements ---
+        const giftTrigger = document.getElementById('gift-trigger');
+        const letterOverlay = document.getElementById('letter-overlay');
+        const closeLetterBtn = document.getElementById('close-letter');
+        const hiddenContent = document.getElementById('hidden-content');
+        const imageSection = document.getElementById('image-section');
+        const messageForm = document.getElementById('message-form');
+        const formContainer = document.getElementById('form-container');
+        const finalWish = document.getElementById('final-wish');
+        const sendButton = document.getElementById('send-button');
+
+
+        // --- Interaction 1: Opening the Gift ---
+        giftTrigger.addEventListener('click', () => {
+            // Play opening animation
+            giftTrigger.classList.add('opening');
+            
+            // Wait for animation to finish, then show letter
+            setTimeout(() => {
+                letterOverlay.classList.add('show');
+                giftTrigger.style.visibility = 'hidden'; // Hide the gift after it "poofs"
+            }, 600);
+        });
+
+        // --- Interaction 2: Closing Letter & Revealing Content ---
+        closeLetterBtn.addEventListener('click', () => {
+            letterOverlay.classList.remove('show');
+            
+            // Make the rest of the page visible
+            hiddenContent.classList.add('visible');
+
+            // Smooth scroll down to the image section
+            setTimeout(() => {
+                 imageSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 100);
+           
+        });
+
+
+        // --- Interaction 3: Sending Email & Final Wish ---
+        messageForm.addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent standard form submission reload
+
+            const userMessageInput = document.getElementById('user-message');
+            const messageValue = userMessageInput.value;
+
+             // Change button state during sending
+             sendButton.innerText = "Sending...";
+             sendButton.disabled = true;
+
+            // --- EMAILJS CONFIGURATION ---
+            // IMPORTANT: YOU MUST REPLACE THESE VALUES WITH YOUR OWN FROM EMAILJS.COM
+            const serviceID = 'YOUR_SERVICE_ID'; 
+            const templateID = 'YOUR_TEMPLATE_ID'; 
+            // The Public Key is initiliazed in the head section.
+
+            const templateParams = {
+                message: messageValue, // This must match the variable {{message}} in your EmailJS template
+                to_email: 'k623595@gmail.com' 
+            };
+
+            emailjs.send(serviceID, templateID, templateParams)
+                .then(() => {
+                    // Success!
+                    console.log('SUCCESS!');
+                    // Hide form smoothly
+                    formContainer.style.opacity = '0';
+                    formContainer.style.transition = 'opacity 0.5s';
+                    
+                    setTimeout(() => {
+                        formContainer.style.display = 'none';
+                        // Show final wish animation
+                        finalWish.style.display = 'block';
+                    }, 500);
+
+                }, (error) => {
+                    // Error handling
+                    console.log('FAILED...', error);
+                    sendButton.innerText = "Failed to send. Try again?";
+                    sendButton.disabled = false;
+                    alert("Oh no! Something went wrong sending the message. Please check console or try again.");
+                });
+        });
+
+    </script>
+</body>
+</html>
